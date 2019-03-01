@@ -137,7 +137,7 @@ if __name__ == "__main__":
 #    parseFooda("simches")
     if len(sys.argv) > 1:
         if sys.argv[1] == "post":
-            handle_command("lunch", "bot_test")
+            handle_command("lunch", "the-lab-lunch-project")
     else:
         if slack_client.rtm_connect(with_team_state=False):
             #print("Fooda Bot connected and running!")
