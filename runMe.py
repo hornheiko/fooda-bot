@@ -1,6 +1,7 @@
 import os
 import time
 import re
+import sys
 from slackclient import SlackClient
 
 #html parsing
@@ -59,7 +60,7 @@ def handle_command(command, channel):
             text=response or default_response,
             user=starterbot_id,
             as_user="true")
-    elif command.startswith("lunch"):
+    elif command == "lunch":
         #print("lunch command")
         blocks = parseFooda("broad")
         #print(blocks)
@@ -89,9 +90,9 @@ def parseFooda(where):
         Gets and parses menu for Broad or MGH
     """
     uri = ""
-    if where is "broad":
+    if where == "broad":
         uri = "http://fooda.com/broadinstitute"
-    elif where is "simches":
+    elif where == "simches":
         uri = "http://fooda.com/simches"
     html = urllib.request.urlopen(uri)
     parsed_html = BeautifulSoup(html, features="html.parser")
@@ -134,14 +135,18 @@ def parseFooda(where):
 
 if __name__ == "__main__":
 #    parseFooda("simches")
-    if slack_client.rtm_connect(with_team_state=False):
-        #print("Fooda Bot connected and running!")
-        # Read bot's user ID by calling Web API method `auth.test`
-        starterbot_id = slack_client.api_call("auth.test")["user_id"]
-        while True:
-            command, channel = parse_bot_commands(slack_client.rtm_read())
-            if command:
-                handle_command(command, channel)
-            time.sleep(RTM_READ_DELAY)
+    if len(sys.argv) > 1:
+        if sys.argv[1] == "post":
+            handle_command("lunch", "bot_test")
     else:
-        print("Connection failed. Exception traceback printed above.")
+        if slack_client.rtm_connect(with_team_state=False):
+            #print("Fooda Bot connected and running!")
+            # Read bot's user ID by calling Web API method `auth.test`
+            starterbot_id = slack_client.api_call("auth.test")["user_id"]
+            while True:
+                command, channel = parse_bot_commands(slack_client.rtm_read())
+                if command:
+                    handle_command(command, channel)
+                time.sleep(RTM_READ_DELAY)
+        else:
+            print("Connection failed. Exception traceback printed above.")
