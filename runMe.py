@@ -8,6 +8,9 @@ from slackclient import SlackClient
 import urllib.request
 from bs4 import BeautifulSoup
 
+#dont run on Saturday/Sunday
+from datetime import date
+
 # instantiate Slack client
 slack_client = SlackClient(os.environ.get("SLACK_BOT_TOKEN"))
 # starterbot's user ID in Slack: value is assigned after the bot starts up
@@ -137,7 +140,9 @@ if __name__ == "__main__":
 #    parseFooda("simches")
     if len(sys.argv) > 1:
         if sys.argv[1] == "post":
-            handle_command("lunch", "the-lab-lunch-project")
+            my_date = date.today()
+            if(my_date.weekday() < 5):
+                handle_command("lunch", "the-lab-lunch-project")
     else:
         if slack_client.rtm_connect(with_team_state=False):
             #print("Fooda Bot connected and running!")
